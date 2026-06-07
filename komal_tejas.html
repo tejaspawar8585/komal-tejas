@@ -151,6 +151,7 @@ input.pin::placeholder{color:rgba(245,200,210,.35);letter-spacing:2px}
 }
 .nav-arr:hover{background:rgba(255,255,255,.95);transform:translateY(-50%) scale(1.1)}
 #navL{left:12px}#navR{right:12px}
+@media(max-width:600px){.nav-arr{display:none!important}}
 
 /* ── Slide 1: Hero ── */
 .s1-inner{text-align:center;max-width:480px;width:100%}
@@ -354,7 +355,7 @@ input.pin::placeholder{color:rgba(245,200,210,.35);letter-spacing:2px}
         </div>
         <div class="cd-msg rv">Until our Engagement Day 💍</div>
         <div class="rv"><span class="cd-badge">10 · June · 2026</span></div>
-        <div class="nav-hint rv">tap → or swipe to continue</div>
+        <div class="nav-hint rv" id="navHint">tap → or swipe to continue</div>
       </div>
     </div>
 
@@ -618,6 +619,7 @@ function burst(){
 let curSlide=0;
 const TOTAL=7;
 function goSlide(n){
+  if(countdownMode)return;
   const slides=document.querySelectorAll('.slide');
   slides[curSlide].classList.remove('active');
   slides[curSlide].classList.add('prev');
@@ -639,6 +641,7 @@ function prevSlide(){goSlide(curSlide-1)}
 let txS=null;
 document.addEventListener('touchstart',e=>txS=e.touches[0].clientX,{passive:true});
 document.addEventListener('touchend',e=>{
+  if(countdownMode){txS=null;return;}
   if(txS===null)return;
   const dx=e.changedTouches[0].clientX-txS;txS=null;
   if(Math.abs(dx)<40)return;
@@ -646,6 +649,7 @@ document.addEventListener('touchend',e=>{
 },{passive:true});
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('main')||document.getElementById('main').style.display==='none')return;
+  if(countdownMode)return;
   if(e.key==='ArrowRight')nextSlide();
   if(e.key==='ArrowLeft')prevSlide();
 });
@@ -784,6 +788,10 @@ function toggleMusic(){
     spawnBokeh();
     updateCd();
     setInterval(updateCd,1000);
+    document.getElementById('navDots').style.display='none';
+    document.getElementById('navL').style.display='none';
+    document.getElementById('navR').style.display='none';
+    var nh=document.getElementById('navHint');if(nh)nh.style.display='none';
   }
   // testMode: lock screen shows normally so full flow can be tested
 })();
